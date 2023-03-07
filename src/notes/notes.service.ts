@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Note } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateNoteDto } from './dtos/create-note.dto';
+import { UpdateNoteDto } from './dtos/update-note.dto';
 
 @Injectable()
 export class NotesService {
@@ -57,5 +58,39 @@ export class NotesService {
     });
 
     return foundNotes;
+  }
+
+  async updateNote(
+    noteId: string,
+    note: UpdateNoteDto,
+  ): Promise<HttpException> {
+    const foundNote = await this.prismaService.note.findUnique({
+      where: {
+        id: noteId,
+      },
+    });
+
+    if (!foundNote) {
+      throw new HttpException('Task not found.', HttpStatus.NOT_FOUND);
+    }
+
+    const updatedNote = await this.prismaService.note.update({
+      where: {
+        id: noteId,
+      },
+      data: {
+        title: note.title,
+        text: note.text,
+      },
+    });
+
+    if (!updatedNote) {
+      throw new HttpException(
+        'Note not updated.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    throw new HttpException('Note successfully updated.', HttpStatus.OK);
   }
 }

@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { CreateNoteDto } from './dtos/create-note.dto';
+import { UpdateNoteDto } from './dtos/update-note.dto';
 import { NotesService } from './notes.service';
 
 @ApiTags('notes')
@@ -22,5 +23,16 @@ export class NotesController {
   @Get('/find/:accountId')
   async findNotes(@Param('accountId') accountId: string) {
     return await this.notesService.findNotes(accountId);
+  }
+
+  @Patch('/update/:noteId')
+  @ApiBody({
+    type: UpdateNoteDto,
+  })
+  async updateNote(
+    @Param('noteId') noteId: string,
+    @Body() note: UpdateNoteDto,
+  ) {
+    return await this.notesService.updateNote(noteId, note);
   }
 }
