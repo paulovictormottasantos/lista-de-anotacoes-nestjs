@@ -93,4 +93,31 @@ export class NotesService {
 
     throw new HttpException('Note successfully updated.', HttpStatus.OK);
   }
+
+  async deleteNote(noteId: string): Promise<HttpException> {
+    const foundTask = await this.prismaService.note.findUnique({
+      where: {
+        id: noteId,
+      },
+    });
+
+    if (!foundTask) {
+      throw new HttpException('Task not found.', HttpStatus.NOT_FOUND);
+    }
+
+    const deletedNote = await this.prismaService.note.delete({
+      where: {
+        id: noteId,
+      },
+    });
+
+    if (!deletedNote) {
+      throw new HttpException(
+        'Note not deleted.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    throw new HttpException('Note successfully deleted.', HttpStatus.OK);
+  }
 }

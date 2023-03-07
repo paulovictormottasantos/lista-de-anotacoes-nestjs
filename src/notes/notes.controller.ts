@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { CreateNoteDto } from './dtos/create-note.dto';
 import { UpdateNoteDto } from './dtos/update-note.dto';
@@ -34,5 +42,10 @@ export class NotesController {
     @Body() note: UpdateNoteDto,
   ) {
     return await this.notesService.updateNote(noteId, note);
+  }
+
+  @Delete('/delete/:noteId')
+  async deleteNote(@Param('noteId') noteId: string) {
+    return await this.notesService.deleteNote(noteId);
   }
 }
