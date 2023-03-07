@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Note } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateNoteDto } from './dtos/create-note.dto';
 
@@ -36,5 +37,25 @@ export class NotesService {
     }
 
     throw new HttpException('Note successfully created.', HttpStatus.CREATED);
+  }
+
+  async findNotes(accountId: string): Promise<Note[]> {
+    const foundAccount = await this.prismaService.account.findUnique({
+      where: {
+        id: accountId,
+      },
+    });
+
+    if (!foundAccount) {
+      throw new HttpException('Account not found.', HttpStatus.NOT_FOUND);
+    }
+
+    const foundNotes = await this.prismaService.note.findMany({
+      where: {
+        accountId,
+      },
+    });
+
+    return foundNotes;
   }
 }

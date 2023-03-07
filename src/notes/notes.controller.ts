@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { CreateNoteDto } from './dtos/create-note.dto';
 import { NotesService } from './notes.service';
@@ -17,5 +17,10 @@ export class NotesController {
     @Body() note: CreateNoteDto,
   ) {
     return await this.notesService.createNote(accountId, note);
+  }
+
+  @Get('/find/:accountId')
+  async findNotes(@Param('accountId') accountId: string) {
+    return await this.notesService.findNotes(accountId);
   }
 }
